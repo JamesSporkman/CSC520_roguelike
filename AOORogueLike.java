@@ -23,6 +23,7 @@ public class AOORogueLike
 		//CREATE: Tiles.
 		theDungeon = new Dungeon();
 		thePlayer = new Player();
+		testRoom = new Room();
 	}
 	//This should be just part of the constructors, no?
 	/*
@@ -61,28 +62,15 @@ public class AOORogueLike
 		private ArrayList<AbstractItem> itemsOnTile;
 		
 		//tile index may be important for judging distances. tileIndex {x, y}
+		//Okay, I'm not sure exactly where you're going with this...
+		//Tile indexes seem like they should be seperate x and y values.
+		//Returning them as an array could work though...
 		private int[] tileIndex;
 		public int[] getIndex(){return tileIndex;}
 		
-		Tile( State stateToAssign, int[] tileIndex ){
-			if( stateToAssign == State.WALL ){
-				
-			}
-			else if( stateToAssign == State.SPACE ){
-				
-			}
-			else if( stateToAssign == State.TRAP ){
-				
-			}
-			else if( stateToAssign == State.TRAP ){
-				
-			}
-			else if( stateToAssign == State.STAIRWELLDOWN ){
-				
-			}
-			else if( stateToAssign == State.STAIRWELLUP ){
-				
-			}
+		Tile( State stateToAssign, int[] tileIndexIn ){
+			this.State = stateToAssign;
+			this.tileIndex = tileIndexIn;
 		}
 		
 		public State getState(){return tileState;}
@@ -127,7 +115,13 @@ public class AOORogueLike
 		public Tile[][] tileMap = new Tile[11][11]; //Max room size
 		
 		Room(){ //Default constructor - an empty room.
-			
+			for( int i = 0; i < this.tileMap.length; i++ ){
+				for( int j = 0; j < this.tileMap[i].length; j++ ){
+					int[] tileIndexIn = new int[11]; //Feels weird doing this.
+					tileIndexIn[i] = j;
+					this.tileMap[i][j] = new Tile( State.SPACE, tileIndexIn );
+				}
+			}
 		}
 		
 		public int[] getTileOfActor( Actor target )
