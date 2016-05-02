@@ -4,14 +4,18 @@ import java.util.ArrayList;
 public class AOORogueLike
 {
 	public void Roguelike(){
-		
+		//CREATE: Dungeon.
+		//CREATE: Floors.
+		//CREATE: Rooms.
+		//CREATE: Tiles.
 	}
 	public void buildDungeon(){
-		
+		buildFloors();
 	}
 	public void buildFloors(){
 		
 	}
+	//Thinking that, at this point, we might as well make each floor a room or two at most.
 	public void buildRooms(){
 		
 	}
@@ -47,13 +51,12 @@ public class AOORogueLike
 		public void setActorOnTile(Actor a)
 		{
 			
-			
 		}
 	}
 	
 	private class Room
 	{
-		public ArrayList<Tile> tileMap;
+		public ArrayList<Tile> tileMap; //Switch to using 2d arrays?
 	}
 	
 	private class Floor
@@ -146,7 +149,7 @@ public class AOORogueLike
 	public class Player extends AbstractActor
 	{
 		public void equip(Equippable e){
-		
+			
 		}
 		public int Score;
 	}
@@ -172,5 +175,38 @@ public class AOORogueLike
 	public static void main(String[] args)
 	{
 		
+		//Player command logic.
+		String commandFull = "W"; //Placeholder, move north.
+		String command = String.valueOf(commandFull.charAt(0));
+		if( command.equalsIgnoreCase("W") ){
+			//Move North.
+		}
+		else if( command.equalsIgnoreCase("S") ){
+			//Move south.
+		}
+		else if(command.equalsIgnoreCase("A")){
+			//Move west.
+		}
+		else if(command.equalsIgnoreCase("D")){
+			//Move east.
+		}
+		else if(command.equalsIgnoreCase("I")){
+			//Display inventory to use/equip.
+		}
+		else if(command.equalsIgnoreCase("E")){
+			//Quick-equip.
+		}
+		else if(command.equalsIgnoreCase("Q")){
+			//Use local feature.
+		}
+		else if(command.equalsIgnoreCase("G")){
+			//Grab item on tile.
+		}
+		else if(command.equalsIgnoreCase("F")){
+			//Attack.
+		}
+		else if(command.equalsIgnoreCase("X")){
+			//Examine.
+		}
 	}
 }
