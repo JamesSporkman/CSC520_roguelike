@@ -174,39 +174,60 @@ public class AOORogueLike
 	
 	public static void main(String[] args)
 	{
-		
-		//Player command logic.
-		String commandFull = "W"; //Placeholder, move north.
-		String command = String.valueOf(commandFull.charAt(0));
-		if( command.equalsIgnoreCase("W") ){
-			//Move North.
-		}
-		else if( command.equalsIgnoreCase("S") ){
-			//Move south.
-		}
-		else if(command.equalsIgnoreCase("A")){
-			//Move west.
-		}
-		else if(command.equalsIgnoreCase("D")){
-			//Move east.
-		}
-		else if(command.equalsIgnoreCase("I")){
-			//Display inventory to use/equip.
-		}
-		else if(command.equalsIgnoreCase("E")){
-			//Quick-equip.
-		}
-		else if(command.equalsIgnoreCase("Q")){
-			//Use local feature.
-		}
-		else if(command.equalsIgnoreCase("G")){
-			//Grab item on tile.
-		}
-		else if(command.equalsIgnoreCase("F")){
-			//Attack.
-		}
-		else if(command.equalsIgnoreCase("X")){
-			//Examine.
+		//Run this shit
+		boolean playerHasTurn = true;
+		while( playerHasTurn ){
+			//Player command logic.
+			String commandFull = "W"; //Placeholder, move north.
+			String command = String.valueOf(commandFull.charAt(0));
+			if( command.equalsIgnoreCase("W") ){
+				//Move North.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if( command.equalsIgnoreCase("S") ){
+				//Move south.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if(command.equalsIgnoreCase("A")){
+				//Move west.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if(command.equalsIgnoreCase("D")){
+				//Move east.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if(command.equalsIgnoreCase("I")){
+				//Display inventory to use/equip.
+				//DO NOT end turn!
+			}
+			else if(command.equalsIgnoreCase("E")){
+				//Equip or use.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if(command.equalsIgnoreCase("Q")){
+				//Use local feature.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if(command.equalsIgnoreCase("G")){
+				//Grab item on tile.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if(command.equalsIgnoreCase("F")){
+				//Attack.
+				//End turn.
+				playerHasTurn = false;
+			}
+			else if(command.equalsIgnoreCase("X")){
+				//Examine.
+				//DO NOT end turn!
+			}
 		}
 	}
 }
