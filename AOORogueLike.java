@@ -146,6 +146,19 @@ public class AOORogueLike
 		private ArrayList<Room> roomGrid;
 		private ArrayList<Actor> actorList;
 		
+		Floor(){ //Default constructor. Adds a single room and the player.
+			this.roomGrid.add( new Room() );
+			actorList.add( thePlayer );
+		}
+		Floor( Room roomToAdd ){//Build with a single room.
+			this.roomGrid.add( roomToAdd );
+			actorList.add( thePlayer );
+		}
+		Floor( ArrayList<Room> roomsToAdd, ArrayList<Actor> actorsToAdd ){ //Now we add a whole set of things.
+			this.roomGrid.addAll(roomsToAdd);
+			this.actorList.addAll(actorsToAdd);
+		}
+		
 		public ArrayList<Room> getRoomGrid(){return roomGrid;}
 		public ArrayList<Actor> getActorList(){return actorList;}
 	}
