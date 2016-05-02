@@ -64,6 +64,27 @@ public class AOORogueLike
 		private int[] tileIndex;
 		public int[] getIndex(){return tileIndex;}
 		
+		Tile( State stateToAssign, int[] tileIndex ){
+			if( stateToAssign == State.WALL ){
+				
+			}
+			else if( stateToAssign == State.SPACE ){
+				
+			}
+			else if( stateToAssign == State.TRAP ){
+				
+			}
+			else if( stateToAssign == State.TRAP ){
+				
+			}
+			else if( stateToAssign == State.STAIRWELLDOWN ){
+				
+			}
+			else if( stateToAssign == State.STAIRWELLUP ){
+				
+			}
+		}
+		
 		public State getState(){return tileState;}
 		public void useFeature()
 		{
@@ -104,6 +125,11 @@ public class AOORogueLike
 	{
 		//public ArrayList<Tile> tileMap; //Switch to using 2d arrays? Unless you can think of a quick way to search a 2d arraylist.
 		public Tile[][] tileMap = new Tile[11][11]; //Max room size
+		
+		Room(){ //Default constructor - an empty room.
+			
+		}
+		
 		public int[] getTileOfActor( Actor target )
 		{
 			int[] returnable = {-1, -1};
