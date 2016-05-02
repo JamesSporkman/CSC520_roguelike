@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class AOORogueLike
 {
+	//Static stuff? Specifically tile symbols.
 	public void Roguelike(){
 		//CREATE: Dungeon.
 		//CREATE: Floors.
@@ -10,14 +11,17 @@ public class AOORogueLike
 		//CREATE: Tiles.
 	}
 	public void buildDungeon(){
+		Dungeon theDungeon = new Dungeon; //Need construction!
 		buildFloors();
 	}
 	public void buildFloors(){
-		
+		buildRooms();
 	}
 	//Thinking that, at this point, we might as well make each floor a room or two at most.
 	public void buildRooms(){
-		
+		loadTiles();
+		loadActors();
+		loadItems();
 	}
 	public void loadTiles(){
 		
@@ -42,7 +46,15 @@ public class AOORogueLike
 		public State getState(){return tileState;}
 		public void useFeature()
 		{
-			
+			if( this.tileState == STAIRWELLDOWN ){
+				theDungeon.descendLevel();
+			}
+			else if( this.tileState == STAIRWELLUP ){
+				theDungeon.ascendLevel();
+			}
+			else{
+				//What to do?
+			}
 		}
 		
 		public ArrayList<AbstractItem> getItemsOnTile() {return itemsOnTile;}
@@ -50,13 +62,25 @@ public class AOORogueLike
 		public Actor getActorOnTile(){return actorOnTile;}
 		public void setActorOnTile(Actor a)
 		{
-			
+			actorOnTile = a;
 		}
 	}
 	
 	private class Room
 	{
-		public ArrayList<Tile> tileMap; //Switch to using 2d arrays?
+		//public ArrayList<Tile> tileMap; //Switch to using 2d arrays? Unless you can think of a quick way to search a 2d arraylist.
+		public Tile[][] tileMap = new Tile[11][11]; //Max room size
+		public int[] getTileOfActor( Actor target )
+		{
+			for( int i = 0; i < tileMap.length(); i++ ){
+				for( int j = 0; j < tileMap[i].length; j++ ){
+					if( tileMap[i][j].getActorOnTile == target ){
+						int[] returnable = { i,j }
+						return returnable;
+					}
+				}
+			}
+		}
 	}
 	
 	private class Floor
@@ -72,11 +96,11 @@ public class AOORogueLike
 	{
 		public void descendLevel()
 		{
-			
+			currentLevel++;
 		}
 		public void ascendLevel()
 		{
-			
+			currentLevel--;
 		}
 		private ArrayList<Floor> levelMap;
 		private int currentLevel;
@@ -117,7 +141,7 @@ public class AOORogueLike
 	{
 		public void use()
 		{
-			
+			Player.equip( this );
 		}
 		private EquipLocation equipSlot;
 		private int armorProvided;
@@ -130,6 +154,7 @@ public class AOORogueLike
 		public int getMaxHealth();
 		public int getCurrentHealth();
 		public ArrayList<AbstractItem> getInventory();
+		public ArrayList<AbstractItem> equipItem();
 		public AbstractItem getInventoryItem(int i);
 		public Tile getLocation();
 		public void attack(Actor Target);
@@ -143,6 +168,7 @@ public class AOORogueLike
 	{
 		public ArrayList<Integer> Stats;
 		public ArrayList<AbstractItem> Inventory;
+		public ArrayList<AbstractItem> EquippedItems;
 		public Tile Location;
 	}
 	
@@ -157,10 +183,18 @@ public class AOORogueLike
 	public class Enemy extends AbstractActor
 	{
 		public void runAll(){
-			
+			if( Awake ){
+				if ( Alert ){
+					//Search target.
+					tile TargetLocation = target.getLocation();
+					//Get target's location.
+					//Compare to current location.
+					//Reduce the difference between locations.
+				}
+			}
 		}
 		public void updateEnergy(){
-			
+			energyLevel = energyGen;
 		}
 		
 		public int energyLevel;
@@ -174,7 +208,11 @@ public class AOORogueLike
 	
 	public static void main(String[] args)
 	{
-		//Run this shit
+		buildDungeon();
+		
+		//Display logic goes here.
+		
+		//Run player logic.
 		boolean playerHasTurn = true;
 		while( playerHasTurn ){
 			//Player command logic.
