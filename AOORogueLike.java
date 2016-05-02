@@ -15,6 +15,7 @@ public class AOORogueLike
 	
 	private Dungeon theDungeon;
 	private Player thePlayer;
+	private Room testRoom;
 	
 	public void AOORogueLike(){
 		//CREATE: Dungeon.
@@ -69,7 +70,7 @@ public class AOORogueLike
 		public int[] getIndex(){return tileIndex;}
 		
 		Tile( State stateToAssign, int[] tileIndexIn ){
-			this.State = stateToAssign;
+			this.tileState = stateToAssign;
 			this.tileIndex = tileIndexIn;
 		}
 		
