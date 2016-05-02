@@ -16,6 +16,7 @@ public class AOORogueLike
 	private Dungeon theDungeon;
 	private Player thePlayer;
 	private Room testRoom;
+	private Floor testFloor;
 	
 	public void AOORogueLike(){
 		//CREATE: Dungeon.
@@ -25,6 +26,7 @@ public class AOORogueLike
 		theDungeon = new Dungeon();
 		thePlayer = new Player();
 		testRoom = new Room();
+		testFloor = new Floor();
 	}
 	//This should be just part of the constructors, no?
 	/*
@@ -101,6 +103,33 @@ public class AOORogueLike
 			}
 		}
 		
+		public String displayTile(){
+			String toReturn = "";
+			if( actorOnTile != null ){//Note: Need to be sure it'd be null. Possibly add 'nothing' case?
+				if( actorOnTile == thePlayer ){
+					toReturn = Character.toString(__PLAYER__);
+				}
+			}
+			else if( itemsOnTile.size() >= 0 ){
+				toReturn = Character.toString(__ITEM__);
+			}
+			else{
+				if( tileState == State.WALL ){
+					toReturn = Character.toString(__WALL__);
+				}
+				else if( tileState == State.STAIRWELLDOWN ){
+					toReturn = Character.toString(__STAIRWELLDOWN__);
+				}
+				else if( tileState == State.STAIRWELLUP ){
+					toReturn = Character.toString(__STAIRWELLUP__);
+				}
+				else{
+					toReturn = Character.toString(__SPACE__);
+				}
+			}
+			return toReturn;
+		}
+		
 		public ArrayList<AbstractItem> getItemsOnTile() {return itemsOnTile;}
 		
 		public Actor getActorOnTile(){return actorOnTile;}
@@ -138,6 +167,16 @@ public class AOORogueLike
 				}
 			}
 			return returnable;
+		}
+		public String displayRoom(){
+			String finishedDisplay = "";
+			for( int i = 0; i < this.tileMap.length; i++ ){
+				for( int j = 0; j < this.tileMap[i].length; j++ ){
+					finishedDisplay = finishedDisplay + tileMap[i][j].displayTile();
+				}
+				finishedDisplay = finishedDisplay + "\n"; //Next line.
+			}
+			return finishedDisplay;
 		}
 	}
 	
