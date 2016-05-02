@@ -60,6 +60,10 @@ public class AOORogueLike
 		private Actor actorOnTile;
 		private ArrayList<AbstractItem> itemsOnTile;
 		
+		//tile index may be important for judging distances. tileIndex {x, y}
+		private int[] tileIndex;
+		public int[] getIndex(){return tileIndex;}
+		
 		public State getState(){return tileState;}
 		public void useFeature()
 		{
@@ -254,6 +258,16 @@ public class AOORogueLike
 			if( Awake ){
 				if ( Alert ){
 					//Search target.
+					if(target == null)
+					{
+						int[] playerLocation = thePlayer.getLocation().getIndex();
+						int[] thisLocation = Location.getIndex();
+						if(((playerLocation[0]-thisLocation[0])<5) && ((playerLocation[0]-thisLocation[0])>-5))
+						{
+							if(((playerLocation[1]-thisLocation[1])<5) && ((playerLocation[1]-thisLocation[1])>-5))
+								target = thePlayer;
+						}
+					}
 					Tile TargetLocation = target.getLocation();
 					//Get target's location.
 					//Compare to current location.
