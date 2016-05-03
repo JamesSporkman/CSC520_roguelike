@@ -18,15 +18,17 @@ public class AOORogueLike
 	private Room testRoom;
 	private Floor testFloor;
 	
-	public void AOORogueLike(){
+	public AOORogueLike(){
 		//CREATE: Dungeon.
 		//CREATE: Floors.
 		//CREATE: Rooms.
 		//CREATE: Tiles.
 		theDungeon = new Dungeon();
 		thePlayer = new Player();
-		testRoom = new Room();
-		testFloor = new Floor();
+		thePlayer.setLocation(theDungeon.setPlayerStart());
+		
+		//testRoom = new Room();
+		//testFloor = new Floor();
 	}
 	//This should be just part of the constructors, no?
 	/*
@@ -55,7 +57,29 @@ public class AOORogueLike
 	}
 	public void display()
 	{
-		
+		//System.out.println("UPDATE DISPLAY");
+		Floor currentFloor = theDungeon.getCurrFloor();
+		ArrayList<Room> roomList = currentFloor.getRoomGrid();
+		for(int i = 0; i<roomList.size();i++)
+		{
+			Room currRoom = roomList.get(i);
+			System.out.print(" ");
+			for(int j = 0; j<currRoom.tileMap.length;j++)
+				System.out.print("_");
+			for(int j = 0; j<currRoom.tileMap.length;j++)
+			{	
+				System.out.println();
+				System.out.print("|");
+				for(int k = 0; k<currRoom.tileMap[j].length;k++)
+					System.out.print(currRoom.tileMap[j][k].displayTile());
+				System.out.print("|");	
+			}
+			System.out.println();
+			System.out.print(" ");
+			for(int j = 0; j<currRoom.tileMap.length;j++)
+				System.out.print("-");
+			System.out.println();
+		}
 	}
 	
 	private class Tile
@@ -72,8 +96,10 @@ public class AOORogueLike
 		public int[] getIndex(){return tileIndex;}
 		
 		Tile( State stateToAssign, int[] tileIndexIn ){
+			itemsOnTile = new ArrayList<AbstractItem>();
 			this.tileState = stateToAssign;
 			this.tileIndex = tileIndexIn;
+			actorOnTile = null;
 		}
 		
 		public State getState(){return tileState;}
@@ -104,13 +130,14 @@ public class AOORogueLike
 		}
 		
 		public String displayTile(){
+			//System.out.println(actorOnTile);
 			String toReturn = "";
 			if( actorOnTile != null ){//Note: Need to be sure it'd be null. Possibly add 'nothing' case?
 				if( actorOnTile == thePlayer ){
 					toReturn = Character.toString(__PLAYER__);
 				}
 			}
-			else if( itemsOnTile.size() >= 0 ){
+			else if( itemsOnTile.size() > 0 ){
 				toReturn = Character.toString(__ITEM__);
 			}
 			else{
@@ -137,6 +164,18 @@ public class AOORogueLike
 		{
 			actorOnTile = a;
 		}
+		public void removeActorOnTile()
+		{
+			actorOnTile = null;
+		}
+		
+		public boolean isVacant()
+		{
+			if(actorOnTile == null && tileState != State.WALL)
+				return true;
+			return false;
+			
+		}
 	}
 	
 	private class Room
@@ -144,16 +183,22 @@ public class AOORogueLike
 		//public ArrayList<Tile> tileMap; //Switch to using 2d arrays? Unless you can think of a quick way to search a 2d arraylist.
 		public Tile[][] tileMap = new Tile[11][11]; //Max room size
 		
-		Room(){ //Default constructor - an empty room.
+		public Room(){ //Default constructor - an empty room.
 			for( int i = 0; i < this.tileMap.length; i++ ){
 				for( int j = 0; j < this.tileMap[i].length; j++ ){
-					int[] tileIndexIn = new int[11]; //Feels weird doing this.
-					tileIndexIn[i] = j;
-					this.tileMap[i][j] = new Tile( State.SPACE, tileIndexIn );
+					int[] tileIndexIn = {i, j}; //Feels weird doing this.
+					//tileIndexIn[i] = j;
+					if(i==5 && j ==5)
+						this.tileMap[i][j] = new Tile( State.WALL, tileIndexIn );
+					else
+						this.tileMap[i][j] = new Tile( State.SPACE, tileIndexIn );
 				}
 			}
 		}
-		
+		Room(State roomDesign[][])
+		{
+			
+		}
 		public int[] getTileOfActor( Actor target )
 		{
 			int[] returnable = {-1, -1};
@@ -178,6 +223,10 @@ public class AOORogueLike
 			}
 			return finishedDisplay;
 		}
+		public void setPlayerStart()
+		{
+			tileMap[2][2].setActorOnTile(thePlayer);
+		}
 	}
 	
 	private class Floor
@@ -185,9 +234,13 @@ public class AOORogueLike
 		private ArrayList<Room> roomGrid;
 		private ArrayList<Actor> actorList;
 		
-		Floor(){ //Default constructor. Adds a single room and the player.
-			this.roomGrid.add( new Room() );
+		public Floor(){ //Default constructor. Adds a single room and the player.
+			Room tempRoom =  new Room();
+			roomGrid = new ArrayList<Room>();
+			actorList = new ArrayList<Actor>();
+			this.roomGrid.add(tempRoom );
 			actorList.add( thePlayer );
+			roomGrid.get(0).setPlayerStart();
 		}
 		Floor( Room roomToAdd ){//Build with a single room.
 			this.roomGrid.add( roomToAdd );
@@ -204,6 +257,13 @@ public class AOORogueLike
 	
 	private class Dungeon
 	{
+		public Dungeon()
+		{
+			Floor newFloor = new Floor();
+			currentLevel = 0;
+			levelMap = new ArrayList<Floor>();
+			levelMap.add(newFloor);
+		}
 		public void descendLevel()
 		{
 			currentLevel++;
@@ -216,8 +276,14 @@ public class AOORogueLike
 		{
 			return levelMap.get(currentLevel);
 		}
+		public Tile setPlayerStart()
+		{
+			levelMap.get(0).getRoomGrid().get(0).setPlayerStart();
+			return levelMap.get(0).getRoomGrid().get(0).tileMap[2][2];
+		}
 		private ArrayList<Floor> levelMap;
 		private int currentLevel;
+		
 	}
 	
 	public enum State
@@ -300,7 +366,65 @@ public class AOORogueLike
 		}
 		public void move(char d)
 		{
-			
+			int[] tileIndex = Location.getIndex();
+			switch(d)
+			{
+				case 'W':
+					//System.out.println("MovedNorth!");
+					
+					if(tileIndex[0]>0)
+					{
+						Room tempRoom = theDungeon.getCurrFloor().getRoomGrid().get(0);
+						if (tempRoom.tileMap[tileIndex[0]-1][tileIndex[1]].isVacant())
+						{
+							Location.removeActorOnTile();
+							Location = tempRoom.tileMap[tileIndex[0]-1][tileIndex[1]];
+							Location.setActorOnTile(this);
+						}
+					}
+					break;
+				case 'S':
+					//System.out.println("MovedSouth!");
+					//int[] tileIndex = Location.getIndex();
+					if(tileIndex[0]<11)
+					{
+						Room tempRoom = theDungeon.getCurrFloor().getRoomGrid().get(0);
+						if (tempRoom.tileMap[tileIndex[0]+1][tileIndex[1]].isVacant())
+						{
+							Location.removeActorOnTile();
+							Location = tempRoom.tileMap[tileIndex[0]+1][tileIndex[1]];
+							Location.setActorOnTile(this);
+						}
+					}
+					break;
+				case 'D':
+					//System.out.println("MovedEast!");
+					//int[] tileIndex = Location.getIndex();
+					if(tileIndex[1]<11)
+					{
+						Room tempRoom = theDungeon.getCurrFloor().getRoomGrid().get(0);
+						if (tempRoom.tileMap[tileIndex[0]][tileIndex[1]+1].isVacant())
+						{
+							Location.removeActorOnTile();
+							Location = tempRoom.tileMap[tileIndex[0]][tileIndex[1]+1];
+							Location.setActorOnTile(this);
+						}
+					}
+					break;
+				case 'A':
+					System.out.println("MovedWest!");
+					//int[] tileIndex = Location.getIndex();
+					if(tileIndex[1]>0)
+					{
+						Room tempRoom = theDungeon.getCurrFloor().getRoomGrid().get(0);
+						if (tempRoom.tileMap[tileIndex[0]][tileIndex[1]-1].isVacant())
+						{
+							Location.removeActorOnTile();
+							Location = tempRoom.tileMap[tileIndex[0]][tileIndex[1]-1];
+							Location.setActorOnTile(this);
+						}
+					}
+			}
 		}
 		public String examine()
 		{
@@ -319,6 +443,14 @@ public class AOORogueLike
 	
 	public class Player extends AbstractActor
 	{
+		Player()
+		{
+			
+		}
+		public void setLocation(Tile myLocation)
+		{
+			Location = myLocation;
+		}
 		public void equip(Equippable e){
 			
 		}
@@ -364,72 +496,97 @@ public class AOORogueLike
 	public static void main(String[] args)
 	{
 		//buildDungeon();
+		AOORogueLike myGame = new AOORogueLike();
 		boolean gameOver = false;
 		//Display logic goes here.
+		myGame.display();
 		while(gameOver == false)
 		{
 			//Run player logic.
 			boolean playerHasTurn = true;
+			System.out.print(">");
 			while( playerHasTurn ){
 			//Player command logic.
-				String commandFull = "W"; //Placeholder, move north.
-				String command = String.valueOf(commandFull.charAt(0));
-				if( command.equalsIgnoreCase("W") ){
+				char command;
+				try
+				{
+					command = (char)System.in.read(); 
+				}catch(Exception e)
+				{
+					command = '0';
+				}
+				//char command = String.valueOf(commandFull.charAt(0));
+				if( command=='W'||command=='w' ){
 					//Move North.
+					myGame.thePlayer.move('W');
 					//End turn.
 					playerHasTurn = false;
 				}
-				else if( command.equalsIgnoreCase("S") ){
+				else if( command=='S'||command=='s' ){
 					//Move south.
 					//End turn.
+					myGame.thePlayer.move('S');
 					playerHasTurn = false;
 				}
-				else if(command.equalsIgnoreCase("A")){
+				else if(command=='A'||command=='a'){
 					//Move west.
 					//End turn.
+					myGame.thePlayer.move('A');
 					playerHasTurn = false;
 				}
-				else if(command.equalsIgnoreCase("D")){
+				else if(command=='D'||command=='d'){
 					//Move east.
 					//End turn.
+					myGame.thePlayer.move('D');
 					playerHasTurn = false;
 				}
-				else if(command.equalsIgnoreCase("I")){
+				else if(command=='I'||command=='i'){
 					//Display inventory to use/equip.
 					//DO NOT end turn!
 				}
-				else if(command.equalsIgnoreCase("E")){
+				else if(command=='E'||command=='e'){
 					//Equip or use.
 					//End turn.
 					playerHasTurn = false;
 				}
-				else if(command.equalsIgnoreCase("Q")){
+				else if(command=='Q'||command=='q'){
 					//Use local feature.
 					//End turn.
 					playerHasTurn = false;
 				}
-				else if(command.equalsIgnoreCase("G")){
+				else if(command=='G'||command=='g'){
 					//Grab item on tile.
 					//End turn.
 					playerHasTurn = false;
 				}
-				else if(command.equalsIgnoreCase("F")){
+				else if(command=='F'||command=='f'){
 					//Attack.
 					//End turn.
 					playerHasTurn = false;
 				}
-				else if(command.equalsIgnoreCase("X")){
-					//Examine.
+				else if(command=='X'||command=='x'){
+					System.out.print("Examine? ");
+					//System.in.read();
+					//playerHasTurn = false;
 					//DO NOT end turn!
+				}
+				else if(command=='?'||command=='.')
+				{
+					System.out.println("QUITTING...");
+					gameOver = true;
+					playerHasTurn = false;
 				}
 				else
 				{
+				//	System.out.println("Unknown command");
 					//Let the user know somehow there was an error?
 				}
 			}
 			
 		//end Player Turn
 		
+		for (int i = 0; i < 50; ++i) System.out.println();
+		myGame.display();
 		//Display and move enemies
 		}
 		//Gameover
